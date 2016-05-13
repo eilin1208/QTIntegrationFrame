@@ -1,5 +1,5 @@
 #include "iconmanager.h"
-#include "sqlitestudio.h"
+#include "IntegrationFrame.h"
 #include "services/pluginmanager.h"
 #include "common/unused.h"
 #include "common/global.h"

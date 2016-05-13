@@ -7,6 +7,9 @@
 
 class QProcessEnvironment;
 class QThreadPool;
+class PluginManager;
+class Plugin;
+class PluginType;
 
 class API_EXPORT IntegrationFrame : public QObject
 {
@@ -46,7 +49,14 @@ public:
      * it keeps the single instance of that object and lets you query variables by name.
      */
     QString getEnv(const QString& name, const QString& defaultValue = QString());
+
+    PluginManager* getPluginManager() const;
+    void setPluginManager(PluginManager* value);
+
 private slots:
+    void pluginLoaded(Plugin* plugin,PluginType* pluginType);
+    void pluginToBeUnloaded(Plugin* plugin,PluginType* pluginType);
+    void pluginUnloaded(const QString& pluginName,PluginType* pluginType);
     /**
      * @brief Cleans up all internal objects.
      *
@@ -65,6 +75,7 @@ private:
 
     bool guiAvailable = false;
     bool immediateQuit = false;
+    PluginManager* pluginManager = nullptr;
 signals:
 
 public slots:

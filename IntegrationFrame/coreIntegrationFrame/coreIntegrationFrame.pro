@@ -52,10 +52,16 @@ QMAKE_CXXFLAGS += -pedantic
 
 
 SOURCES += \
-    IntegrationFrame.cpp
+    IntegrationFrame.cpp \
+    plugins/plugintype.cpp \
+    impl/pluginmanagerimpl.cpp
 
 HEADERS +=\
     common/global.h \
     common/unused.h \
     coreIntegrationFrame_global.h \
-    IntegrationFrame.h
+    IntegrationFrame.h \
+    services/pluginmanager.h \
+    plugins/plugin.h \
+    plugins/plugintype.h \
+    impl/pluginmanagerimpl.h
