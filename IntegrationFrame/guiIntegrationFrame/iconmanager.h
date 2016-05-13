@@ -2,7 +2,7 @@
 #define ICONMANAGER_H
 
 #include "icon.h"
-#include "guiSQLiteStudio_global.h"
+#include "guiIntegrationFrame_global.h"
 #include <QStringList>
 #include <QHash>
 #include <QIcon>

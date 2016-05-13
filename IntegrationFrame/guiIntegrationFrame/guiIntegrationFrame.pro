@@ -32,11 +32,19 @@ QMAKE_CXXFLAGS += -pedantic
 DEFINES += GUIINTEGRATIONFRAME_LIBRARY
 
 SOURCES += \
-    mainwindow.cpp
+    mainwindow.cpp \
+    icon.cpp \
+    iconmanager.cpp \
+    common/extactioncontainer.cpp \
+    common/extactionprototype.cpp
 
 HEADERS +=\
-        guiintegrationframe_global.h \
-    mainwindow.h
+    mainwindow.h \
+    icon.h \
+    iconmanager.h \
+    common/extactioncontainer.h \
+    common/extactionprototype.h \
+    guiIntegrationFrame_global.h
 
 RESOURCES += \
     icons.qrc \

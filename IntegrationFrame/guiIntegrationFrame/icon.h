@@ -1,7 +1,7 @@
 #ifndef ICONS_H
 #define ICONS_H
 
-#include "guiSQLiteStudio_global.h"
+#include "guiIntegrationFrame_global.h"
 #include <QString>
 #include <QIcon>
 #include <QVariant>

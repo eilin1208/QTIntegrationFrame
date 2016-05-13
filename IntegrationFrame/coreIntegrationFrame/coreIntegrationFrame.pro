@@ -51,7 +51,11 @@ CONFIG   += c++11
 QMAKE_CXXFLAGS += -pedantic
 
 
-SOURCES +=
+SOURCES += \
+    IntegrationFrame.cpp
 
 HEADERS +=\
-        coreintegrationframe_global.h
+    common/global.h \
+    common/unused.h \
+    coreIntegrationFrame_global.h \
+    IntegrationFrame.h
