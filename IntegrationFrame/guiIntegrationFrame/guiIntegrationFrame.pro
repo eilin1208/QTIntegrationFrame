@@ -36,7 +36,8 @@ SOURCES += \
     icon.cpp \
     iconmanager.cpp \
     common/extactioncontainer.cpp \
-    common/extactionprototype.cpp
+    common/extactionprototype.cpp \
+    common/extaction.cpp
 
 HEADERS +=\
     mainwindow.h \
@@ -44,7 +45,8 @@ HEADERS +=\
     iconmanager.h \
     common/extactioncontainer.h \
     common/extactionprototype.h \
-    guiIntegrationFrame_global.h
+    guiIntegrationFrame_global.h \
+    common/extaction.h
 
 RESOURCES += \
     icons.qrc \

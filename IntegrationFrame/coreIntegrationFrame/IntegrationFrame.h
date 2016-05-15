@@ -10,6 +10,7 @@ class QThreadPool;
 class PluginManager;
 class Plugin;
 class PluginType;
+class Config;
 
 class API_EXPORT IntegrationFrame : public QObject
 {
@@ -19,6 +20,11 @@ class API_EXPORT IntegrationFrame : public QObject
 public:
     explicit IntegrationFrame(QObject *parent = 0);
 
+    Config* getConfig() const;
+    void setConfig(Config* value);
+
+    int getVersion() const;
+    QString getVersionString() const;
 
     /**
      * @brief Initializes SQLiteStudio object.
@@ -75,6 +81,7 @@ private:
 
     bool guiAvailable = false;
     bool immediateQuit = false;
+    Config* config = nullptr;
     PluginManager* pluginManager = nullptr;
 signals:
 

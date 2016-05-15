@@ -1,5 +1,6 @@
 #include "IntegrationFrame.h"
 #include "common/unused.h"
+#include "services/impl/configimpl.h"
 #include "services/pluginmanager.h"
 #include "plugins/plugin.h"
 #include "plugins/plugintype.h"
@@ -12,7 +13,7 @@
 
 DEFINE_SINGLETON(IntegrationFrame)
 
-static const int IntegrationFrameVersion = 30008;
+static const int IntegrationFrameVersion = 10001;
 
 IntegrationFrame::IntegrationFrame(QObject *parent) : QObject(parent)
 {
@@ -28,6 +29,9 @@ void IntegrationFrame::init(const QStringList& cmdListArguments, bool guiAvailab
     QThreadPool::globalInstance()->setMaxThreadCount(10);
 
     Q_INIT_RESOURCE(coreIntegrationFrame);
+
+    config = new ConfigImpl();
+    config->init();
 
     pluginManager = new PluginManagerImpl();
 
@@ -89,3 +93,27 @@ void IntegrationFrame::setPluginManager(PluginManager* value)
     pluginManager = value;
 }
 
+int IntegrationFrame::getVersion() const
+{
+    return IntegrationFrameVersion;
+}
+
+QString IntegrationFrame::getVersionString() const
+{
+    int ver = getVersion();
+    int majorVer = ver / 10000;
+    int minorVer = ver % 10000 / 100;
+    int patchVer = ver % 100;
+    return QString::number(majorVer) + "." + QString::number(minorVer) + "." + QString::number(patchVer);
+}
+
+Config* IntegrationFrame::getConfig() const
+{
+    return config;
+}
+
+void IntegrationFrame::setConfig(Config* value)
+{
+    safe_delete(config);
+    config = value;
+}

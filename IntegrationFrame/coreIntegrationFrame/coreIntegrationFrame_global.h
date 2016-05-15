@@ -9,4 +9,10 @@
 #  define API_EXPORT Q_DECL_IMPORT
 #endif
 
+#ifdef Q_OS_WIN
+#   define PATH_LIST_SEPARATOR ";"
+#else
+#   define PATH_LIST_SEPARATOR ":"
+#endif
+
 #endif // COREINTEGRATIONFRAME_GLOBAL_H
