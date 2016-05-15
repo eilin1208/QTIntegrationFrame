@@ -1,12 +1,11 @@
 #include "IntegrationFrame.h"
 #include "common/unused.h"
-#include "services/impl/configimpl.h"
 #include "services/pluginmanager.h"
 #include "plugins/plugin.h"
 #include "plugins/plugintype.h"
 #include "impl/pluginmanagerimpl.h"
 
-
+#include <QtGlobal>
 #include <QProcessEnvironment>
 #include <QThreadPool>
 #include <QCoreApplication>
@@ -28,10 +27,9 @@ void IntegrationFrame::init(const QStringList& cmdListArguments, bool guiAvailab
 
     QThreadPool::globalInstance()->setMaxThreadCount(10);
 
-    Q_INIT_RESOURCE(coreIntegrationFrame);
+    //Q_INIT_RESOURCE(coreIntegrationFrame);
 
-    config = new ConfigImpl();
-    config->init();
+    config = nullptr;
 
     pluginManager = new PluginManagerImpl();
 
@@ -116,4 +114,14 @@ void IntegrationFrame::setConfig(Config* value)
 {
     safe_delete(config);
     config = value;
+}
+
+bool IntegrationFrame::isGuiAvailable() const
+{
+    return guiAvailable;
+}
+
+QString IntegrationFrame::getCurrentLang() const
+{
+    return currentLang;
 }

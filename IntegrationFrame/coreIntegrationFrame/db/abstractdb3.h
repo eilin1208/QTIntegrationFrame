@@ -2,12 +2,10 @@
 #define ABSTRACTDB3_H
 
 #include "db/abstractdb.h"
-#include "parser/lexer.h"
-#include "common/utils_sql.h"
 #include "common/unused.h"
-#include "services/collationmanager.h"
-#include "sqlitestudio.h"
+#include "IntegrationFrame.h"
 #include "db/sqlerrorcodes.h"
+#include "common/utils_sql.h"
 #include "log.h"
 #include <QThread>
 #include <QPointer>
@@ -55,11 +53,6 @@ class AbstractDb3 : public AbstractDb
         void initAfterOpen();
         SqlQueryPtr prepare(const QString& query);
         QString getTypeLabel();
-        bool deregisterFunction(const QString& name, int argCount);
-        bool registerScalarFunction(const QString& name, int argCount);
-        bool registerAggregateFunction(const QString& name, int argCount);
-        bool registerCollationInternal(const QString& name);
-        bool deregisterCollationInternal(const QString& name);
 
     private:
         class Query : public SqlQuery
@@ -121,16 +114,6 @@ class AbstractDb3 : public AbstractDb
         void resetError();
 
         /**
-         * @brief Registers function to call when unknown collation was encountered by the SQLite.
-         *
-         * For unknown collations SQLite calls function registered by this method and expects it to register
-         * proper function handling that collation, otherwise the query will result with error.
-         *
-         * The default collation handler does a simple QString::compare(), case insensitive.
-         */
-        void registerDefaultCollationRequestHandler();
-
-        /**
          * @brief Stores given result in function's context.
          * @param context Custom SQL function call context.
          * @param result Value returned from function execution.
@@ -151,60 +134,6 @@ class AbstractDb3 : public AbstractDb
          * was for example BLOB, then the QVariant will be a QByteArray, etc.
          */
         static QList<QVariant> getArgs(int argCount, typename T::value** args);
-
-        /**
-         * @brief Evaluates requested function using defined implementation code and provides result.
-         * @param context SQL function call context.
-         * @param argCount Number of arguments passed to the function.
-         * @param args Arguments passed to the function.
-         *
-         * This method is aware of the implementation language and the code defined for it,
-         * so it delegates the execution to the proper plugin handling that language. Then it stores
-         * result returned from the plugin in function's context, so it becomes function's result.
-         *
-         * This method is called for scalar functions.
-         *
-         * @see DbQt::evaluateScalar()
-         */
-        static void evaluateScalar(typename T::context* context, int argCount, typename T::value** args);
-
-        /**
-         * @brief Evaluates requested function using defined implementation code and provides result.
-         * @param context SQL function call context.
-         * @param argCount Number of arguments passed to the function.
-         * @param args Arguments passed to the function.
-         *
-         * This method is called for aggregate functions.
-         *
-         * If this is the first call to this function using this context, then it will execute
-         * both "initial" and then "per step" code for this function implementation.
-         *
-         * @see DbQt3::evaluateScalar()
-         * @see DbQt::evaluateAggregateStep()
-         */
-        static void evaluateAggregateStep(typename T::context* context, int argCount, typename T::value** args);
-
-        /**
-         * @brief Evaluates "final" code for aggregate function.
-         * @param context SQL function call context.
-         *
-         * This method is called for aggregate functions.
-         *
-         * It's called once, at the end of aggregate function evaluation.
-         * It executes "final" code of the function implementation.
-         */
-        static void evaluateAggregateFinal(typename T::context* context);
-
-        /**
-         * @brief Evaluates code of the collation.
-         * @param userData Collation user data (name of the collation inside).
-         * @param length1 Number of characters in value1 (excluding \0).
-         * @param value1 First value to compare.
-         * @param length2 Number of characters in value2 (excluding \0).
-         * @param value2 Second value to compare.
-         * @return -1, 0, or 1, as SQLite's collation specification demands it.
-         */
-        static int evaluateCollation(void* userData, int length1, const void* value1, int length2, const void* value2);
 
         /**
          * @brief Cleans up collation user data when collation is deregistered.
@@ -229,60 +158,6 @@ class AbstractDb3 : public AbstractDb
          * The memory is released after the aggregate function is finished.
          */
         static void* getContextMemPtr(typename T::context* context);
-
-        /**
-         * @brief Allocates and/or returns QHash shared across all aggregate function steps.
-         * @param context SQL function call context.
-         * @return Shared hash table.
-         *
-         * The hash table is created before initial aggregate function step is made.
-         * Then it's shared across all further steps (using this method to get it)
-         * and then releases the memory after the last (final) step of the function call.
-         */
-        static QHash<QString,QVariant> getAggregateContext(typename T::context* context);
-
-        /**
-         * @brief Sets new value of the aggregate function shared hash table.
-         * @param context SQL function call context.
-         * @param aggregateContext New shared hash table value to store.
-         *
-         * This should be called after each time the context was requested with getAggregateContext() and then modified.
-         */
-        static void setAggregateContext(typename T::context* context, const QHash<QString,QVariant>& aggregateContext);
-
-        /**
-         * @brief Releases aggregate function shared hash table.
-         * @param context SQL function call context.
-         *
-         * This should be called from final aggregate function step  to release the shared context (delete QHash).
-         * The memory used to store pointer to the shared context will be released by the SQLite itself.
-         */
-        static void releaseAggregateContext(typename T::context* context);
-
-        /**
-         * @brief Registers default collation for requested collation.
-         * @param fnUserData User data passed when registering collation request handling function.
-         * @param fnDbHandle Database handle for which this call is being made.
-         * @param eTextRep Text encoding (for now always T::UTF8).
-         * @param collationName Name of requested collation.
-         *
-         * This function is called by SQLite to order registering collation with given name. We register default collation,
-         * cause all known collations should already be registered.
-         *
-         * Default collation is implemented by evaluateDefaultCollation().
-         */
-        static void registerDefaultCollation(void* fnUserData, typename T::handle* fnDbHandle, int eTextRep, const char* collationName);
-
-        /**
-         * @brief Called as a default collation implementation.
-         * @param userData Collation user data, not used.
-         * @param length1 Number of characters in value1 (excluding \0).
-         * @param value1 First value to compare.
-         * @param length2 Number of characters in value2 (excluding \0).
-         * @param value2 Second value to compare.
-         * @return -1, 0, or 1, as SQLite's collation specification demands it.
-         */
-        static int evaluateDefaultCollation(void* userData, int length1, const void* value1, int length2, const void* value2);
 
         typename T::handle* dbHandle = nullptr;
         QString dbErrorMessage;
@@ -393,7 +268,7 @@ template <class T>
 void AbstractDb3<T>::initAfterOpen()
 {
     T::enable_load_extension(dbHandle, true);
-    registerDefaultCollationRequestHandler();;
+    //registerDefaultCollationRequestHandler();;
     exec("PRAGMA foreign_keys = 1;", Flag::NO_LOCK);
     exec("PRAGMA recursive_triggers = 1;", Flag::NO_LOCK);
 }
@@ -410,80 +285,6 @@ QString AbstractDb3<T>::getTypeLabel()
     return T::label;
 }
 
-template <class T>
-bool AbstractDb3<T>::deregisterFunction(const QString& name, int argCount)
-{
-    if (!dbHandle)
-        return false;
-
-    T::create_function(dbHandle, name.toUtf8().constData(), argCount, T::UTF8, 0, nullptr, nullptr, nullptr);
-    return true;
-}
-
-template <class T>
-bool AbstractDb3<T>::registerScalarFunction(const QString& name, int argCount)
-{
-    if (!dbHandle)
-        return false;
-
-    FunctionUserData* userData = new FunctionUserData;
-    userData->db = this;
-    userData->name = name;
-    userData->argCount = argCount;
-
-    int res = T::create_function_v2(dbHandle, name.toUtf8().constData(), argCount, T::UTF8, userData,
-                                         &AbstractDb3<T>::evaluateScalar,
-                                         nullptr,
-                                         nullptr,
-                                         &AbstractDb3<T>::deleteUserData);
-
-    return res == T::OK;
-}
-
-template <class T>
-bool AbstractDb3<T>::registerAggregateFunction(const QString& name, int argCount)
-{
-    if (!dbHandle)
-        return false;
-
-    FunctionUserData* userData = new FunctionUserData;
-    userData->db = this;
-    userData->name = name;
-    userData->argCount = argCount;
-
-    int res = T::create_function_v2(dbHandle, name.toUtf8().constData(), argCount, T::UTF8, userData,
-                                         nullptr,
-                                         &AbstractDb3<T>::evaluateAggregateStep,
-                                         &AbstractDb3<T>::evaluateAggregateFinal,
-                                         &AbstractDb3<T>::deleteUserData);
-
-    return res == T::OK;
-}
-
-template <class T>
-bool AbstractDb3<T>::registerCollationInternal(const QString& name)
-{
-    if (!dbHandle)
-        return false;
-
-    CollationUserData* userData = new CollationUserData;
-    userData->name = name;
-
-    int res = T::create_collation_v2(dbHandle, name.toUtf8().constData(), T::UTF8, userData,
-                                          &AbstractDb3<T>::evaluateCollation,
-                                          &AbstractDb3<T>::deleteCollationUserData);
-    return res == T::OK;
-}
-
-template <class T>
-bool AbstractDb3<T>::deregisterCollationInternal(const QString& name)
-{
-    if (!dbHandle)
-        return false;
-
-    T::create_collation_v2(dbHandle, name.toUtf8().constData(), T::UTF8, nullptr, nullptr, nullptr);
-    return true;
-}
 
 template <class T>
 QString AbstractDb3<T>::extractLastError()
@@ -619,49 +420,6 @@ QList<QVariant> AbstractDb3<T>::getArgs(int argCount, typename T::value** args)
 }
 
 template <class T>
-void AbstractDb3<T>::evaluateScalar(typename T::context* context, int argCount, typename T::value** args)
-{
-    QList<QVariant> argList = getArgs(argCount, args);
-    bool ok = true;
-    QVariant result = AbstractDb::evaluateScalar(T::user_data(context), argList, ok);
-    storeResult(context, result, ok);
-}
-
-template <class T>
-void AbstractDb3<T>::evaluateAggregateStep(typename T::context* context, int argCount, typename T::value** args)
-{
-    void* dataPtr = T::user_data(context);
-    QList<QVariant> argList = getArgs(argCount, args);
-    QHash<QString,QVariant> aggregateContext = getAggregateContext(context);
-
-    AbstractDb::evaluateAggregateStep(dataPtr, aggregateContext, argList);
-
-    setAggregateContext(context, aggregateContext);
-}
-
-template <class T>
-void AbstractDb3<T>::evaluateAggregateFinal(typename T::context* context)
-{
-    void* dataPtr = T::user_data(context);
-    QHash<QString,QVariant> aggregateContext = getAggregateContext(context);
-
-    bool ok = true;
-    QVariant result = AbstractDb::evaluateAggregateFinal(dataPtr, aggregateContext, ok);
-
-    storeResult(context, result, ok);
-    releaseAggregateContext(context);
-}
-
-template <class T>
-int AbstractDb3<T>::evaluateCollation(void* userData, int length1, const void* value1, int length2, const void* value2)
-{
-    UNUSED(length1);
-    UNUSED(length2);
-    CollationUserData* collUserData = reinterpret_cast<CollationUserData*>(userData);
-    return COLLATIONS->evaluate(collUserData->name, QString::fromUtf8((const char*)value1), QString::fromUtf8((const char*)value2));
-}
-
-template <class T>
 void AbstractDb3<T>::deleteCollationUserData(void* userData)
 {
     if (!userData)
@@ -685,84 +443,6 @@ template <class T>
 void* AbstractDb3<T>::getContextMemPtr(typename T::context* context)
 {
     return T::aggregate_context(context, sizeof(QHash<QString,QVariant>**));
-}
-
-template <class T>
-QHash<QString, QVariant> AbstractDb3<T>::getAggregateContext(typename T::context* context)
-{
-    return AbstractDb::getAggregateContext(getContextMemPtr(context));
-}
-
-template <class T>
-void AbstractDb3<T>::setAggregateContext(typename T::context* context, const QHash<QString, QVariant>& aggregateContext)
-{
-    AbstractDb::setAggregateContext(getContextMemPtr(context), aggregateContext);
-}
-
-template <class T>
-void AbstractDb3<T>::releaseAggregateContext(typename T::context* context)
-{
-    AbstractDb::releaseAggregateContext(getContextMemPtr(context));
-}
-
-template <class T>
-void AbstractDb3<T>::registerDefaultCollation(void* fnUserData, typename T::handle* fnDbHandle, int eTextRep, const char* collationName)
-{
-    UNUSED(eTextRep);
-
-    CollationUserData* defUserData = reinterpret_cast<CollationUserData*>(fnUserData);
-    if (!defUserData)
-    {
-        qWarning() << "Null userData in AbstractDb3<T>::registerDefaultCollation().";
-        return;
-    }
-
-    AbstractDb3<T>* db = defUserData->db;
-    if (!db)
-    {
-        qWarning() << "No database defined in userData of AbstractDb3<T>::registerDefaultCollation().";
-        return;
-    }
-
-    // If SQLite seeks for collation implementation with different encoding, we force it to use existing one.
-    if (db->isCollationRegistered(QString::fromUtf8(collationName)))
-        return;
-
-    // Check if dbHandle matches - just in case
-    if (db->dbHandle != fnDbHandle)
-    {
-        qWarning() << "Mismatch of dbHandle in AbstractDb3<T>::registerDefaultCollation().";
-        return;
-    }
-
-    int res = T::create_collation_v2(fnDbHandle, collationName, T::UTF8, nullptr,
-                                          &AbstractDb3<T>::evaluateDefaultCollation, nullptr);
-
-    if (res != T::OK)
-        qWarning() << "Could not register default collation in AbstractDb3<T>::registerDefaultCollation().";
-}
-
-template <class T>
-int AbstractDb3<T>::evaluateDefaultCollation(void* userData, int length1, const void* value1, int length2, const void* value2)
-{
-    UNUSED(userData);
-    UNUSED(length1);
-    UNUSED(length2);
-    return COLLATIONS->evaluateDefault(QString::fromUtf8((const char*)value1, length1), QString::fromUtf8((const char*)value2, length2));
-}
-
-template <class T>
-void AbstractDb3<T>::registerDefaultCollationRequestHandler()
-{
-    if (!dbHandle)
-        return;
-
-    defaultCollationUserData = new CollationUserData;
-    defaultCollationUserData->db = this;
-
-    int res = T::collation_needed(dbHandle, defaultCollationUserData, &AbstractDb3<T>::registerDefaultCollation);
-    if (res != T::OK)
-        qWarning() << "Could not register default collation request handler. Unknown collations will cause errors.";
 }
 
 //------------------------------------------------------------------------------------

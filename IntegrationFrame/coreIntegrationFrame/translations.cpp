@@ -1,5 +1,5 @@
 #include "translations.h"
-#include "sqlitestudio.h"
+#include "IntegrationFrame.h"
 #include <QTranslator>
 #include <QCoreApplication>
 #include <QDir>
@@ -18,7 +18,7 @@ void loadTranslation(const QString& baseName)
 
     QString fName;
     bool res = false;
-    QString lang = SQLITESTUDIO->getCurrentLang();
+    QString lang = INTEGRATIONFRAME->getCurrentLang();
     QStringList filters = QStringList({baseName+"_"+lang+".qm"});
     QDir dir;
 

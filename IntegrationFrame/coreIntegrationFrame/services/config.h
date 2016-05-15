@@ -3,8 +3,6 @@
 
 #include "coreIntegrationFrame_global.h"
 #include "config_builder.h"
-#include "services/functionmanager.h"
-#include "collationmanager.h"
 #include "IntegrationFrame.h"
 #include "common/utils.h"
 #include <QObject>
@@ -61,50 +59,6 @@ class API_EXPORT Config : public QObject
 
         typedef QSharedPointer<CfgDb> CfgDbPtr;
 
-        struct DbGroup;
-        typedef QSharedPointer<DbGroup> DbGroupPtr;
-
-        struct DbGroup
-        {
-            qint64 id;
-            QString referencedDbName;
-            QString name;
-            QList<DbGroupPtr> childs;
-            int order;
-            bool open = false;
-        };
-
-        struct SqlHistoryEntry
-        {
-            QString query;
-            QString dbName;
-            int rowsAffected;
-            int unixtime;
-        };
-
-        typedef QSharedPointer<SqlHistoryEntry> SqlHistoryEntryPtr;
-
-        struct DdlHistoryEntry
-        {
-            QString dbName;
-            QString dbFile;
-            QDateTime timestamp;
-            QString queries;
-        };
-
-        typedef QSharedPointer<DdlHistoryEntry> DdlHistoryEntryPtr;
-
-        struct ReportHistoryEntry
-        {
-            int id = 0;
-            bool isFeatureRequest = false;
-            int timestamp = 0;
-            QString title;
-            QString url;
-        };
-
-        typedef QSharedPointer<ReportHistoryEntry> ReportHistoryEntryPtr;
-
         virtual void init() = 0;
         virtual void cleanUp() = 0;
         virtual const QString& getConfigDir() const = 0;
@@ -135,30 +89,6 @@ class API_EXPORT Config : public QObject
         virtual QList<CfgDbPtr> dbList() = 0;
         virtual CfgDbPtr getDb(const QString& dbName) = 0;
 
-        virtual void storeGroups(const QList<DbGroupPtr>& groups) = 0;
-        virtual QList<DbGroupPtr> getGroups() = 0;
-        virtual DbGroupPtr getDbGroup(const QString& dbName) = 0;
-
-        virtual qint64 addSqlHistory(const QString& sql, const QString& dbName, int timeSpentMillis, int rowsAffected) = 0;
-        virtual void updateSqlHistory(qint64 id, const QString& sql, const QString& dbName, int timeSpentMillis, int rowsAffected) = 0;
-        virtual void clearSqlHistory() = 0;
-        virtual QAbstractItemModel* getSqlHistoryModel() = 0;
-
-        virtual void addCliHistory(const QString& text) = 0;
-        virtual void applyCliHistoryLimit() = 0;
-        virtual void clearCliHistory() = 0;
-        virtual QStringList getCliHistory() const = 0;
-
-        virtual void addDdlHistory(const QString& queries, const QString& dbName, const QString& dbFile) = 0;
-        virtual QList<DdlHistoryEntryPtr> getDdlHistoryFor(const QString& dbName, const QString& dbFile, const QDate& date) = 0;
-        virtual DdlHistoryModel* getDdlHistoryModel() = 0;
-        virtual void clearDdlHistory() = 0;
-
-        virtual void addReportHistory(bool isFeatureRequest, const QString& title, const QString& url) = 0;
-        virtual QList<ReportHistoryEntryPtr> getReportHistory() = 0;
-        virtual void deleteReport(int id) = 0;
-        virtual void clearReportHistory() = 0;
-
         virtual void begin() = 0;
         virtual void commit() = 0;
         virtual void rollback() = 0;
@@ -168,13 +98,6 @@ class API_EXPORT Config : public QObject
     signals:
         void massSaveBegins();
         void massSaveCommited();
-        void sqlHistoryRefreshNeeded();
-        void ddlHistoryRefreshNeeded();
-        void reportsHistoryRefreshNeeded();
-
-    public slots:
-        virtual void refreshSqlHistory() = 0;
-        virtual void refreshDdlHistory() = 0;
 };
 
 #define CFG INTEGRATIONFRAME->getConfig()

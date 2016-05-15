@@ -10,13 +10,13 @@ LIBS += -L$$DESTDIR
 
 macx: {
     QMAKE_CXXFLAGS += -Wno-gnu-zero-variadic-macro-arguments -Wno-overloaded-virtual
-    INCLUDEPATH += $$PWD/../../include
-    LIBS += -L$$PWD/../../lib
+    INCLUDEPATH += $$PWD/../include
+    LIBS += -L$$PWD/../lib
 }
 
 win32: {
-    INCLUDEPATH += $$PWD/../../include $$PWD/../../include/quazip
-    LIBS += -L$$PWD/../../lib
+    INCLUDEPATH += $$PWD/../include $$PWD/../include/quazip
+    LIBS += -L$$PWD/../lib
 }
 
 INCLUDEPATH += $$PWD/coreIntegrationFrame

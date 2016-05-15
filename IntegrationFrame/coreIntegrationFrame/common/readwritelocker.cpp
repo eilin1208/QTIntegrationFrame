@@ -1,6 +1,6 @@
 #include "readwritelocker.h"
-#include "parser/lexer.h"
-#include "common/utils_sql.h"
+//#include "parser/lexer.h"
+//#include "common/utils_sql.h"
 #include <QReadWriteLock>
 #include <QReadLocker>
 #include <QWriteLocker>
@@ -52,15 +52,16 @@ ReadWriteLocker::Mode ReadWriteLocker::getMode(const QString &query, Dialect dia
     if (noLock)
         return ReadWriteLocker::NONE;
 
-    QueryAccessMode queryMode = getQueryAccessMode(query, dialect);
-    switch (queryMode)
-    {
-        case QueryAccessMode::READ:
-            return ReadWriteLocker::READ;
-        case QueryAccessMode::WRITE:
-            return ReadWriteLocker::WRITE;
-    }
+    //TODO 2016-05-15 注释掉
+//    QueryAccessMode queryMode = getQueryAccessMode(query, dialect);
+//    switch (queryMode)
+//    {
+//        case QueryAccessMode::READ:
+//            return ReadWriteLocker::READ;
+//        case QueryAccessMode::WRITE:
+//            return ReadWriteLocker::WRITE;
+//    }
 
-    qCritical() << "Unhandled query access mode:" << static_cast<int>(queryMode);
+//    qCritical() << "Unhandled query access mode:" << static_cast<int>(queryMode);
     return ReadWriteLocker::NONE;
 }

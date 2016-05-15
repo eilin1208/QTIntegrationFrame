@@ -230,7 +230,7 @@ bool PluginManagerImpl::checkPluginRequirements(const QString& pluginName, const
     if (INTEGRATIONFRAME->getVersion() < minVer)
     {
         qDebug() << "Plugin" << pluginName << "skipped, because it requires at least SQLiteStudio version" << toPrintableVersion(minVer) << ", but got"
-                 << SQLITESTUDIO->getVersionString();
+                 << INTEGRATIONFRAME->getVersionString();
         return false;
     }
 
@@ -238,7 +238,7 @@ bool PluginManagerImpl::checkPluginRequirements(const QString& pluginName, const
     if (INTEGRATIONFRAME->getVersion() > maxVer)
     {
         qDebug() << "Plugin" << pluginName << "skipped, because it requires at most SQLiteStudio version" << toPrintableVersion(maxVer) << ", but got"
-                 << SQLITESTUDIO->getVersionString();
+                 << INTEGRATIONFRAME->getVersionString();
         return false;
     }
 
@@ -569,11 +569,12 @@ bool PluginManagerImpl::load(const QString& pluginName, QStringList& alreadyAtte
 
     // Initializing loaded plugin
     Plugin* plugin = dynamic_cast<Plugin*>(container->loader->instance());
-    GenericPlugin* genericPlugin = dynamic_cast<GenericPlugin*>(plugin);
-    if (genericPlugin)
-    {
-        genericPlugin->loadMetaData(container->loader->metaData());
-    }
+    //TODO 加载通用插件 -- GenericPlugin
+//    GenericPlugin* genericPlugin = dynamic_cast<GenericPlugin*>(plugin);
+//    if (genericPlugin)
+//    {
+//        genericPlugin->loadMetaData(container->loader->metaData());
+//    }
 
     if (!plugin->init())
     {
@@ -605,16 +606,18 @@ void PluginManagerImpl::pluginLoaded(PluginManagerImpl::PluginContainer* contain
 
 void PluginManagerImpl::addPluginToCollections(Plugin* plugin)
 {
-    ScriptingPlugin* scriptingPlugin = dynamic_cast<ScriptingPlugin*>(plugin);
-    if (scriptingPlugin)
-        scriptingPlugins[scriptingPlugin->getLanguage()] = scriptingPlugin;
+    //TODO 添加插件--ScriptingPlugin
+//    ScriptingPlugin* scriptingPlugin = dynamic_cast<ScriptingPlugin*>(plugin);
+//    if (scriptingPlugin)
+//        scriptingPlugins[scriptingPlugin->getLanguage()] = scriptingPlugin;
 }
 
 void PluginManagerImpl::removePluginFromCollections(Plugin* plugin)
 {
-    ScriptingPlugin* scriptingPlugin = dynamic_cast<ScriptingPlugin*>(plugin);
-    if (scriptingPlugin && scriptingPlugins.contains(scriptingPlugin->getLanguage()))
-        scriptingPlugins.remove(plugin->getName());
+    //TODO 移除插件--ScriptingPlugin
+//    ScriptingPlugin* scriptingPlugin = dynamic_cast<ScriptingPlugin*>(plugin);
+//    if (scriptingPlugin && scriptingPlugins.contains(scriptingPlugin->getLanguage()))
+//        scriptingPlugins.remove(plugin->getName());
 }
 
 bool PluginManagerImpl::readMetaData(PluginManagerImpl::PluginContainer* container)

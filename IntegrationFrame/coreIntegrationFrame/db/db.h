@@ -3,12 +3,13 @@
 
 #include "returncode.h"
 #include "dialect.h"
-#include "services/functionmanager.h"
 #include "common/readwritelocker.h"
 #include "coreIntegrationFrame_global.h"
 #include "db/attachguard.h"
 #include "interruptable.h"
 #include "dbobjecttype.h"
+#include "common/global.h"
+#include <functional>
 #include <QObject>
 #include <QVariant>
 #include <QList>

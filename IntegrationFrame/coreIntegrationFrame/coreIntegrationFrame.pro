@@ -10,7 +10,7 @@ OBJECTS_DIR = $$OBJECTS_DIR/coreIntegrationFrame
 MOC_DIR = $$MOC_DIR/coreIntegrationFrame
 UI_DIR = $$UI_DIR/coreIntegrationFrame
 
-QT       += network xml
+QT       += network script
 QT       -= gui
 
 TARGET = coreIntegrationFrame
@@ -19,7 +19,7 @@ TEMPLATE = lib
 DEFINES += COREINTEGRATIONFRAME_LIBRARY
 
 win32 {
-    #LIBS += -lpsapi $$PWD/../../../lib/libquazip.a
+    LIBS += -lpsapi $$PWD/../../lib/libquazip.a
     LIBS += -limagehlp
 
     THE_FILE = $$PWD/qt.conf
@@ -41,7 +41,7 @@ macx: {
     QMAKE_POST_LINK += install_name_tool -change libsqlite3.dylib @loader_path/../Frameworks/libsqlite3.dylib $$join(out_file)
 }
 
-#LIBS += -lsqlite3
+LIBS += -lsqlite3
 
 portable {
     DEFINES += PORTABLE_CONFIG
@@ -65,12 +65,25 @@ SOURCES += \
     db/attachguard.cpp \
     common/readwritelocker.cpp \
     returncode.cpp \
-    services/functionmanager.cpp \
     translations.cpp \
     common/utils.cpp \
     db/sqlquery.cpp \
     db/sqlresultsrow.cpp \
-    db/dbsqlite3.cpp
+    db/dbsqlite3.cpp \
+    db/abstractdb.cpp \
+    log.cpp \
+    db/sqlerrorcodes.cpp \
+    services/dbmanager.cpp \
+    db/sqlerrorresults.cpp \
+    db/asyncqueryrunner.cpp \
+    rsa/BigInt.cpp \
+    rsa/RSA.cpp \
+    rsa/PrimeGenerator.cpp \
+    common/utils_sql.cpp \
+    parser/lexer.cpp \
+    parser/token.cpp \
+    parser/keywords.cpp \
+    parser/lexer_low_lev.cpp
 
 HEADERS +=\
     common/global.h \
@@ -95,12 +108,25 @@ HEADERS +=\
     common/readwritelocker.h \
     dialect.h \
     returncode.h \
-    services/functionmanager.h \
     translations.h \
     common/utils.h \
-    collationmanager.h \
     db/sqlquery.h \
     db/sqlresultsrow.h \
     db/dbsqlite3.h \
     db/abstractdb3.h \
-    db/stdsqlite3driver.h
+    db/stdsqlite3driver.h \
+    db/abstractdb.h \
+    common/bihash.h \
+    log.h \
+    db/sqlerrorcodes.h \
+    services/dbmanager.h \
+    db/sqlerrorresults.h \
+    db/asyncqueryrunner.h \
+    rsa/BigInt.h \
+    rsa/RSA.h \
+    rsa/PrimeGenerator.h \
+    common/utils_sql.h \
+    parser/lexer.h \
+    parser/token.h \
+    parser/keywords.h \
+    parser/lexer_low_lev.h

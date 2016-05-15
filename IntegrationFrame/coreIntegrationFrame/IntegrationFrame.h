@@ -4,6 +4,7 @@
 #include <QObject>
 #include "coreIntegrationFrame_global.h"
 #include "common/global.h"
+#include "services/config.h"
 
 class QProcessEnvironment;
 class QThreadPool;
@@ -19,6 +20,8 @@ class API_EXPORT IntegrationFrame : public QObject
     DECLARE_SINGLETON(IntegrationFrame)
 public:
     explicit IntegrationFrame(QObject *parent = 0);
+
+    bool isGuiAvailable() const;
 
     Config* getConfig() const;
     void setConfig(Config* value);
@@ -59,6 +62,8 @@ public:
     PluginManager* getPluginManager() const;
     void setPluginManager(PluginManager* value);
 
+    QString getCurrentLang() const;
+
 private slots:
     void pluginLoaded(Plugin* plugin,PluginType* pluginType);
     void pluginToBeUnloaded(Plugin* plugin,PluginType* pluginType);
@@ -83,6 +88,8 @@ private:
     bool immediateQuit = false;
     Config* config = nullptr;
     PluginManager* pluginManager = nullptr;
+
+    QString currentLang;
 signals:
 
 public slots:

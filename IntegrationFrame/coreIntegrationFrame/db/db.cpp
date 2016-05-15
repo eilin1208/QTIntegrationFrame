@@ -1,6 +1,7 @@
 #include "db.h"
 #include <QMetaEnum>
 #include <QDebug>
+#include <QtNetWork>
 
 Db::Db()
 {
