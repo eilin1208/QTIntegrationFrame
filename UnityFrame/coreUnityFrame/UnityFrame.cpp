@@ -35,6 +35,16 @@ void CUnityFrame::init(const QStringList& cmdListArguments, bool guiAvailable)
 
 }
 
+bool CUnityFrame::getImmediateQuit() const
+{
+    return immediateQuit;
+}
+
+void CUnityFrame::setImmediateQuit(bool value)
+{
+    immediateQuit = value;
+}
+
 void CUnityFrame::initPlugins()
 {
     pluginManager->init();
@@ -124,4 +134,25 @@ bool CUnityFrame::isGuiAvailable() const
 QString CUnityFrame::getCurrentLang() const
 {
     return currentLang;
+}
+
+QStringList CUnityFrame::getInitialTranslationFiles() const
+{
+    return initialTranslationFiles;
+}
+
+void CUnityFrame::setInitialTranslationFiles(const QStringList& value)
+{
+    initialTranslationFiles = value;
+}
+
+DbManager* CUnityFrame::getDbManager() const
+{
+    return dbManager;
+}
+
+void CUnityFrame::setDbManager(DbManager* value)
+{
+    safe_delete(dbManager);
+    dbManager = value;
 }

@@ -12,6 +12,7 @@ class PluginManager;
 class Plugin;
 class PluginType;
 class Config;
+class DbManager;
 
 class API_EXPORT CUnityFrame : public QObject
 {
@@ -62,6 +63,15 @@ public:
     PluginManager* getPluginManager() const;
     void setPluginManager(PluginManager* value);
 
+    QStringList getInitialTranslationFiles() const;
+    void setInitialTranslationFiles(const QStringList& value);
+
+    DbManager* getDbManager() const;
+    void setDbManager(DbManager* value);
+
+    bool getImmediateQuit() const;
+    void setImmediateQuit(bool value);
+
     QString getCurrentLang() const;
 
 private slots:
@@ -88,8 +98,11 @@ private:
     bool immediateQuit = false;
     Config* config = nullptr;
     PluginManager* pluginManager = nullptr;
+    DbManager* dbManager = nullptr;
 
     QString currentLang;
+
+    QStringList initialTranslationFiles;
 signals:
 
 public slots:

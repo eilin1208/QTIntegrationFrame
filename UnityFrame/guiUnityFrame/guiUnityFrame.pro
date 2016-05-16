@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets xml
+QT       += core gui uitools widgets xml svg
 
 include($$PWD/../dirs.pri)
 include($$PWD/../utils.pri)
@@ -37,7 +37,12 @@ SOURCES += \
     iconmanager.cpp \
     common/extactioncontainer.cpp \
     common/extactionprototype.cpp \
-    common/extaction.cpp
+    common/extaction.cpp \
+    mdiarea.cpp \
+    mdichild.cpp \
+    mdiwindow.cpp \
+    uiconfig.cpp \
+    taskbar.cpp
 
 HEADERS +=\
     mainwindow.h \
@@ -46,7 +51,12 @@ HEADERS +=\
     common/extactioncontainer.h \
     common/extactionprototype.h \
     common/extaction.h \
-    guiUnityFrame_global.h
+    guiUnityFrame_global.h \
+    mdiarea.h \
+    mdichild.h \
+    mdiwindow.h \
+    uiconfig.h \
+    taskbar.h
 
 RESOURCES += \
     icons.qrc \

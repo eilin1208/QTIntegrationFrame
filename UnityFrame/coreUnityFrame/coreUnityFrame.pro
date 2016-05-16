@@ -19,7 +19,7 @@ TEMPLATE = lib
 DEFINES += COREUNITYFRAME_LIBRARY
 
 win32 {
-    LIBS += -lpsapi $$PWD/../../lib/libquazip.a
+    LIBS += -lpsapi $$PWD/../../../lib/libquazip.a
     LIBS += -limagehlp
 
     THE_FILE = $$PWD/qt.conf
@@ -83,7 +83,8 @@ SOURCES += \
     parser/token.cpp \
     parser/keywords.cpp \
     parser/lexer_low_lev.cpp \
-    UnityFrame.cpp
+    UnityFrame.cpp \
+    committable.cpp
 
 HEADERS +=\
     common/global.h \
@@ -129,4 +130,5 @@ HEADERS +=\
     parser/keywords.h \
     parser/lexer_low_lev.h \
     coreUnityFrame_global.h \
-    UnityFrame.h
+    UnityFrame.h \
+    committable.h
