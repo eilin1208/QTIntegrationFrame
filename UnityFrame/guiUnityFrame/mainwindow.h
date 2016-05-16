@@ -11,14 +11,15 @@
 #include <QHash>
 #include <QQueue>
 
-//class MdiWindow;
-//class MdiChild;
+class MdiWindow;
+class MdiChild;
 class QUiLoader;
 class MdiArea;
 class QActionGroup;
 class Committable;
 class QProgressBar;
 class QLabel;
+class ThemeTuner;
 
 #ifdef Q_OS_MACX
 #define PREV_TASK_KEY_SEQ Qt::CTRL + Qt::ALT + Qt::Key_Left
@@ -37,6 +38,7 @@ CFG_KEY_LIST(MainWindow, QObject::tr("Main window"),
      CFG_KEY_ENTRY(OPEN_DEBUG_CONSOLE, Qt::Key_F12,                 QObject::tr("Open Debug Console"))
      CFG_KEY_ENTRY(OPEN_CSS_CONSOLE,   Qt::Key_F11,                 QObject::tr("Open CSS Console"))
 )
+
 
 class GUI_API_EXPORT MainWindow : public QMainWindow, public ExtActionContainer
 {

@@ -5,6 +5,7 @@
 #include "mdichild.h"
 #include "iconmanager.h"
 #include "uiconfig.h"
+#include "themetuner.h"
 #include "common/extaction.h"
 #include "services/notifymanager.h"
 #include "services/pluginmanager.h"
@@ -45,7 +46,10 @@ void MainWindow::init()
     setWindowTitle(QString("UnityFrame (%1)").arg(UNITYFRAME->getVersionString()));
 
     initActions();
+    ui->mdiArea->setTaskBar(ui->taskBar);
+    addToolBar(Qt::BottomToolBarArea, ui->taskBar);
 
+    qApp->installEventFilter(this);
 }
 
 MainWindow *MainWindow::getInstance()
@@ -64,6 +68,11 @@ void MainWindow::createActions()
 void MainWindow::setupDefShortcuts()
 {
     BIND_SHORTCUTS(MainWindow, Action);
+}
+
+void MainWindow::notifyAboutLanguageChange()
+{
+    notifyInfo(tr("You need to restart application to make the language change take effect."));
 }
 
 

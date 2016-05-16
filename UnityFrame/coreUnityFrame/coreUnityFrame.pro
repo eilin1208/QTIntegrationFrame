@@ -84,7 +84,8 @@ SOURCES += \
     parser/keywords.cpp \
     parser/lexer_low_lev.cpp \
     UnityFrame.cpp \
-    committable.cpp
+    committable.cpp \
+    services/impl/configimpl.cpp
 
 HEADERS +=\
     common/global.h \
@@ -131,4 +132,8 @@ HEADERS +=\
     parser/lexer_low_lev.h \
     coreUnityFrame_global.h \
     UnityFrame.h \
-    committable.h
+    committable.h \
+    services/impl/configimpl.h
+
+RESOURCES += \
+    coreUnityFrame.qrc

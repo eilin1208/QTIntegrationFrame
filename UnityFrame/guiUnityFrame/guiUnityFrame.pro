@@ -42,7 +42,9 @@ SOURCES += \
     mdichild.cpp \
     mdiwindow.cpp \
     uiconfig.cpp \
-    taskbar.cpp
+    taskbar.cpp \
+    themetuner.cpp \
+    widgetresizer.cpp
 
 HEADERS +=\
     mainwindow.h \
@@ -56,7 +58,9 @@ HEADERS +=\
     mdichild.h \
     mdiwindow.h \
     uiconfig.h \
-    taskbar.h
+    taskbar.h \
+    themetuner.h \
+    widgetresizer.h
 
 RESOURCES += \
     icons.qrc \

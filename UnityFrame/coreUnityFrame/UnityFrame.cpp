@@ -4,6 +4,11 @@
 #include "plugins/plugin.h"
 #include "plugins/plugintype.h"
 #include "impl/pluginmanagerimpl.h"
+#include "common/utils.h"
+#include "common/utils_sql.h"
+#include "parser/keywords.h"
+#include "parser/lexer.h"
+#include "services/notifymanager.h"
 
 #include <QtGlobal>
 #include <QProcessEnvironment>
@@ -29,10 +34,23 @@ void CUnityFrame::init(const QStringList& cmdListArguments, bool guiAvailable)
 
     //Q_INIT_RESOURCE(coreUnityFrame);
 
+    CfgLazyInitializer::init();
+
+    initUtils();
+    CfgMain::staticInit();
+    Db::metaInit();
+    initUtilsSql();
+    initKeywords();
+    Lexer::staticInit();
+    //CompletionHelper::init();
+
+    NotifyManager::getInstance();
+
     config = nullptr;
 
     pluginManager = new PluginManagerImpl();
 
+    cmdLineArgs = cmdListArguments;
 }
 
 bool CUnityFrame::getImmediateQuit() const
@@ -60,7 +78,9 @@ void CUnityFrame::cleanUp()
             pluginManager->deinit();
 
         safe_delete(pluginManager); // PluginManager before DbManager, so Db objects are deleted while DbManager still exists
+        NotifyManager::destroy();
     }
+    //Q_CLEANUP_RESOURCE(coreUnityFrame);
 }
 
 void CUnityFrame::pluginLoaded(Plugin* plugin, PluginType* pluginType)

@@ -87,6 +87,12 @@ private slots:
 
 private:
     /**
+     * @brief List of command line arguments.
+     *
+     * It's a copy of arguments passed to application in command line.
+     */
+    QStringList cmdLineArgs;
+    /**
      * @brief The application environment.
      *
      * This variable represents environment of the application.
